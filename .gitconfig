@@ -27,3 +27,6 @@
 	enable = true
 [branch]
 	sort = -committerdate
+[core]
+	whitespace = cr-at-eol
+	filemode = false
