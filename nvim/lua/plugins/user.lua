@@ -1,6 +1,7 @@
 vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
 vim.api.nvim_set_keymap("i", "<C-H>", "copilot#Previous()", { silent = true, expr = true })
 vim.api.nvim_set_keymap("i", "<C-K>", "copilot#Next()", { silent = true, expr = true })
+vim.g.copilot_no_tab_map = true
 
 if vim.fn.exists "g:os" == 0 then
   local is_windows = vim.fn.has "win64" == 1 or vim.fn.has "win32" == 1 or vim.fn.has "win16" == 1
@@ -23,17 +24,6 @@ end
 
 ---@type LazySpec
 return {
-
-  -- == Examples of Adding Plugins ==
-  "andweeb/presence.nvim",
-  {
-    "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require("lsp_signature").setup() end,
-  },
-
-  -- == Examples of Overriding Plugins ==
-
   -- customize alpha options
   {
     "goolord/alpha-nvim",
@@ -90,7 +80,7 @@ return {
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.luasnip" (plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom luasnip configuration such as filetype extend or custom snippets
       local luasnip = require "luasnip"
       luasnip.filetype_extend("javascript", { "javascriptreact" })
@@ -100,7 +90,7 @@ return {
   {
     "windwp/nvim-autopairs",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.nvim-autopairs" (plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.nvim-autopairs"(plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom autopairs configuration such as custom rules
       local npairs = require "nvim-autopairs"
       local Rule = require "nvim-autopairs.rule"
@@ -108,20 +98,20 @@ return {
       npairs.add_rules(
         {
           Rule("$", "$", { "tex", "latex" })
-          -- don't add a pair if the next character is %
-              :with_pair(cond.not_after_regex "%%")
-          -- don't add a pair if  the previous character is xxx
-              :with_pair(
-                cond.not_before_regex("xxx", 3)
-              )
-          -- don't move right when repeat character
-              :with_move(cond.none())
-          -- don't delete if the next character is xx
-              :with_del(cond.not_after_regex "xx")
-          -- disable adding a newline when you press <cr>
-              :with_del(cond.not_after_regex "xx")
-          -- disable adding a newline when you press <cr>
-              :with_cr(cond.none()),
+            -- don't add a pair if the next character is %
+            :with_pair(cond.not_after_regex "%%")
+            -- don't add a pair if  the previous character is xxx
+            :with_pair(
+              cond.not_before_regex("xxx", 3)
+            )
+            -- don't move right when repeat character
+            :with_move(cond.none())
+            -- don't delete if the next character is xx
+            :with_del(cond.not_after_regex "xx")
+            -- disable adding a newline when you press <cr>
+            :with_del(cond.not_after_regex "xx")
+            -- disable adding a newline when you press <cr>
+            :with_cr(cond.none()),
         },
         -- disable for .vim files, but it work for another filetypes
         Rule("a", "a", "-vim")
@@ -144,7 +134,6 @@ return {
     "github/copilot.vim",
     lazy = false,
   },
-
   {
     "lukoshkin/auenv.nvim",
     lazy = false,
@@ -156,5 +145,16 @@ return {
       "nvim-telescope/telescope.nvim",
     },
     cmd = { "CoAuthor" },
+  },
+  {
+    "akinsho/nvim-toggleterm.lua",
+    config = require("toggleterm").setup {
+      direction = "float",
+      persist_mode = true,
+    },
+  },
+  {
+    "ranjithshegde/ccls.nvim",
+    lazy = false,
   },
 }
