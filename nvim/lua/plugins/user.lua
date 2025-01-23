@@ -14,17 +14,19 @@ if vim.fn.exists "g:os" == 0 then
 end
 
 if vim.g.os == "Windows" then
-  vim.opt.shell = "powershell"
-  vim.opt.shellcmdflag = "-command"
+  vim.opt.shell = "powershell.exe"
+  vim.opt.shellcmdflag = "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command"
   vim.opt.shellquote = '\\"'
   vim.opt.shellxquote = ""
+  vim.opt.shellpipe = "|"
+  vim.opt.shellredir = "| Out-Host"
+  -- vim.g.loaded_man = 1
 end
 -- You can also add or configure plugins by creating files in this `plugins/` folder
 -- Here are some examples:
 
 ---@type LazySpec
 return {
-  -- customize alpha options
   {
     "goolord/alpha-nvim",
     opts = function(_, opts)
@@ -73,10 +75,6 @@ return {
     end,
   },
 
-  -- You can disable default plugins as follows:
-  -- { "max397574/better-escape.nvim", enabled = false },
-
-  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
@@ -120,12 +118,6 @@ return {
   },
 
   {
-    "kaarmu/typst.vim",
-    ft = "typst",
-    lazy = false,
-  },
-
-  {
     "sQVe/sort.nvim",
     event = "BufRead",
   },
@@ -160,5 +152,40 @@ return {
   {
     "ranjithshegde/ccls.nvim",
     lazy = false,
+  },
+
+  {
+    "akinsho/toggleterm.nvim",
+    opts = {
+      direction = "float",
+    },
+  },
+
+  { "kaarmu/typst.vim", ft = { "typst" } },
+
+  {
+    "williamboman/mason-lspconfig.nvim",
+    opts = function(_, opts)
+      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "tinymist" })
+    end,
+  },
+
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "tinymist" })
+    end,
+  },
+
+  {
+    "chomosuke/typst-preview.nvim",
+    cmd = { "TypstPreview", "TypstPreviewToggle", "TypstPreviewUpdate" },
+    build = function() require("typst-preview").update() end,
+    opts = {
+      dependencies_bin = {
+        tinymist = "tinymist",
+      },
+    },
   },
 }
