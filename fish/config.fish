@@ -11,9 +11,10 @@ end
 # Aliases
 alias ls="ls -G"
 alias l="ll"
-alias jupyter-notebook="~/.local/bin/jupyter-notebook --no-browser"
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
+alias copy="xclip -selection clipboard"
+
+alias activate="source .venv/bin/activate.fish"
 
 fish_add_path ~/.local/bin
 fish_add_path ~/.cargo/bin
+
