@@ -43,8 +43,14 @@ return {
     ---@diagnostic disable: missing-fields
     config = {
       clangd = { capabilities = { offsetEncoding = "utf-16" } },
-      tinymist = { offset_encoding = "utf-8" },
-      -- tinymist = { offset_encoding = "utf-8", settings = { rootPath = vim.fn.getcwd() } },
+      tinymist = {
+        offset_encoding = "utf-8",
+        settings = {
+          semanticTokens = "disable",
+          exportPdf = "onSave",
+          rootPath = vim.fn.getcwd(),
+        },
+      },
     },
     -- customize how language servers are attached
     handlers = {
