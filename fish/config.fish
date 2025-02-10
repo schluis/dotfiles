@@ -1,5 +1,3 @@
-export PATH="/root/.local/bin:$PATH"
-
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
