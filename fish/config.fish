@@ -1,3 +1,6 @@
+# export PATH="/root/.local/bin:$PATH"
+export EDITOR=nvim 
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
@@ -10,6 +13,7 @@ end
 alias ls="ls -G"
 alias l="ll"
 alias copy="xclip -selection clipboard"
+alias calc="fend"
 
 alias activate="source .venv/bin/activate.fish"
 

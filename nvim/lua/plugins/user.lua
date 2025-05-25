@@ -1,7 +1,14 @@
-vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("i", "<C-;>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
 vim.api.nvim_set_keymap("i", "<C-H>", "copilot#Previous()", { silent = true, expr = true })
 vim.api.nvim_set_keymap("i", "<C-K>", "copilot#Next()", { silent = true, expr = true })
 vim.g.copilot_no_tab_map = true
+
+local function SuggestOneWord()
+  local suggestion = vim.fn["copilot#Accept"] ""
+  local bar = vim.fn["copilot#TextQueuedForInsertion"]()
+  return vim.fn.split(bar, [[[ .]\zs]])[1]
+end
+vim.keymap.set("i", "<C-L>", SuggestOneWord, { expr = true, remap = false })
 
 if vim.fn.exists "g:os" == 0 then
   local is_windows = vim.fn.has "win64" == 1 or vim.fn.has "win32" == 1 or vim.fn.has "win16" == 1
@@ -25,7 +32,7 @@ end
 
 vim.api.nvim_create_user_command("TypstPin", function()
   local tinymist_id = nil
-  for _, client in pairs(vim.lsp.get_active_clients()) do
+  for _, client in pairs(vim.lsp.get_clients()) do
     if client.name == "tinymist" then
       tinymist_id = client.id
       break
@@ -104,7 +111,7 @@ return {
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.luasnip" (plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom luasnip configuration such as filetype extend or custom snippets
       local luasnip = require "luasnip"
       luasnip.filetype_extend("javascript", { "javascriptreact" })
@@ -114,7 +121,7 @@ return {
   {
     "windwp/nvim-autopairs",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.nvim-autopairs"(plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.nvim-autopairs" (plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom autopairs configuration such as custom rules
       local npairs = require "nvim-autopairs"
       local Rule = require "nvim-autopairs.rule"
@@ -122,20 +129,20 @@ return {
       npairs.add_rules(
         {
           Rule("$", "$", { "tex", "latex" })
-            -- don't add a pair if the next character is %
-            :with_pair(cond.not_after_regex "%%")
-            -- don't add a pair if  the previous character is xxx
-            :with_pair(
-              cond.not_before_regex("xxx", 3)
-            )
-            -- don't move right when repeat character
-            :with_move(cond.none())
-            -- don't delete if the next character is xx
-            :with_del(cond.not_after_regex "xx")
-            -- disable adding a newline when you press <cr>
-            :with_del(cond.not_after_regex "xx")
-            -- disable adding a newline when you press <cr>
-            :with_cr(cond.none()),
+          -- don't add a pair if the next character is %
+              :with_pair(cond.not_after_regex "%%")
+          -- don't add a pair if  the previous character is xxx
+              :with_pair(
+                cond.not_before_regex("xxx", 3)
+              )
+          -- don't move right when repeat character
+              :with_move(cond.none())
+          -- don't delete if the next character is xx
+              :with_del(cond.not_after_regex "xx")
+          -- disable adding a newline when you press <cr>
+              :with_del(cond.not_after_regex "xx")
+          -- disable adding a newline when you press <cr>
+              :with_cr(cond.none()),
         },
         -- disable for .vim files, but it work for another filetypes
         Rule("a", "a", "-vim")
