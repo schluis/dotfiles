@@ -14,9 +14,13 @@ alias ls="ls -G"
 alias l="ll"
 alias copy="xclip -selection clipboard"
 alias calc="fend"
+alias y="yazi"
 
 alias activate="source .venv/bin/activate.fish"
 
 fish_add_path ~/.local/bin
 fish_add_path ~/.cargo/bin
 
+
+# opencode
+fish_add_path /home/schluis/.opencode/bin

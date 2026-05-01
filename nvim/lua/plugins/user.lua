@@ -1,6 +1,28 @@
-vim.api.nvim_set_keymap("i", "<C-;>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
-vim.api.nvim_set_keymap("i", "<C-H>", "copilot#Previous()", { silent = true, expr = true })
-vim.api.nvim_set_keymap("i", "<C-K>", "copilot#Next()", { silent = true, expr = true })
+if vim.g.neovide then
+  vim.api.nvim_set_keymap(
+    "n",
+    "<C-+>",
+    ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1<CR>",
+    { silent = true }
+  )
+  vim.api.nvim_set_keymap(
+    "n",
+    "<C-_>",
+    ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1<CR>",
+    { silent = true }
+  )
+  vim.api.nvim_set_keymap("n", "<C-0>", ":lua vim.g.neovide_scale_factor = 1<CR>", { silent = true })
+
+  vim.g.neovide_cursor_vfx_mode = "sonicboom"
+  -- vim.g.neovide_cursor_vfx_mode = "ripple"
+  -- vim.g.neovide_cursor_vfx_mode = "pixiedust"
+  vim.g.neovide_scroll_animation_length = 0.2
+  vim.g.neovide_cursor_trail_size = 0.5
+end
+
+vim.keymap.set("i", "<C-;>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+vim.keymap.set("i", "<C-H>", "copilot#Previous()", { silent = true, expr = true })
+vim.keymap.set("i", "<C-K>", "copilot#Next()", { silent = true, expr = true })
 vim.g.copilot_no_tab_map = true
 
 local function SuggestOneWord()
@@ -111,7 +133,7 @@ return {
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.luasnip" (plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom luasnip configuration such as filetype extend or custom snippets
       local luasnip = require "luasnip"
       luasnip.filetype_extend("javascript", { "javascriptreact" })
@@ -121,7 +143,7 @@ return {
   {
     "windwp/nvim-autopairs",
     config = function(plugin, opts)
-      require "astronvim.plugins.configs.nvim-autopairs" (plugin, opts) -- include the default astronvim config that calls the setup call
+      require "astronvim.plugins.configs.nvim-autopairs"(plugin, opts) -- include the default astronvim config that calls the setup call
       -- add more custom autopairs configuration such as custom rules
       local npairs = require "nvim-autopairs"
       local Rule = require "nvim-autopairs.rule"
@@ -129,20 +151,20 @@ return {
       npairs.add_rules(
         {
           Rule("$", "$", { "tex", "latex" })
-          -- don't add a pair if the next character is %
-              :with_pair(cond.not_after_regex "%%")
-          -- don't add a pair if  the previous character is xxx
-              :with_pair(
-                cond.not_before_regex("xxx", 3)
-              )
-          -- don't move right when repeat character
-              :with_move(cond.none())
-          -- don't delete if the next character is xx
-              :with_del(cond.not_after_regex "xx")
-          -- disable adding a newline when you press <cr>
-              :with_del(cond.not_after_regex "xx")
-          -- disable adding a newline when you press <cr>
-              :with_cr(cond.none()),
+            -- don't add a pair if the next character is %
+            :with_pair(cond.not_after_regex "%%")
+            -- don't add a pair if  the previous character is xxx
+            :with_pair(
+              cond.not_before_regex("xxx", 3)
+            )
+            -- don't move right when repeat character
+            :with_move(cond.none())
+            -- don't delete if the next character is xx
+            :with_del(cond.not_after_regex "xx")
+            -- disable adding a newline when you press <cr>
+            :with_del(cond.not_after_regex "xx")
+            -- disable adding a newline when you press <cr>
+            :with_cr(cond.none()),
         },
         -- disable for .vim files, but it work for another filetypes
         Rule("a", "a", "-vim")
@@ -151,8 +173,34 @@ return {
   },
 
   {
-    "sQVe/sort.nvim",
-    event = "BufRead",
+    "nickjvandyke/opencode.nvim",
+    version = "*",
+    dependencies = { "folke/snacks.nvim" },
+    config = function()
+      vim.g.opencode_opts = {
+        models = { "claude-sonnet-4-20250514" },
+      }
+      vim.o.autoread = true
+
+      vim.keymap.set(
+        { "n", "t" },
+        "<leader>k",
+        function() require("opencode").toggle() end,
+        { desc = "Toggle opencode" }
+      )
+      vim.keymap.set(
+        { "n", "x" },
+        "<leader><space>",
+        function() require("opencode").ask("@this: ", { submit = true }) end,
+        { desc = "Ask opencode…" }
+      )
+      vim.keymap.set(
+        { "n", "x" },
+        "<leader>x",
+        function() require("opencode").select() end,
+        { desc = "Execute opencode action…" }
+      )
+    end,
   },
 
   {
@@ -170,22 +218,15 @@ return {
   },
 
   {
-    "akinsho/nvim-toggleterm.lua",
-    config = require("toggleterm").setup {
-      direction = "float",
-      persist_mode = true,
-    },
-  },
-
-  {
     "ranjithshegde/ccls.nvim",
     lazy = false,
   },
 
   {
     "akinsho/toggleterm.nvim",
-    opts = {
-      direction = "float",
-    },
+    opts = function(_, opts)
+      opts.direction = "float"
+      return opts
+    end,
   },
 }
