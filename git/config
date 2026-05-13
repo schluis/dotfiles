@@ -1,0 +1,15 @@
+[user]
+	email = schluis@posteo.de
+	name = Luis Scheuch
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGHoCm+15j5T4XZE+DeizU7taIo7UYECCFVgvqJZZ2cN
+[pull]
+	rebase = true
+[core]
+	editor = nvim
+	autocrlf = true
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /opt/1Password/op-ssh-sign
