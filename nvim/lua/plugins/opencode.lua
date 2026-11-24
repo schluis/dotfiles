@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
   "nickjvandyke/opencode.nvim",
+  enabled = vim.g.ai_provider == "opencode",
   version = "*",
   dependencies = {
     {
@@ -9,22 +10,27 @@ return {
       optional = false,
       opts = {
         input = {},
-        picker = {
-          actions = {
-            opencode_send = function(...) return require("opencode").snacks_picker_send(...) end,
-          },
-          win = {
-            input = {
-              keys = {
-                ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
-              },
-            },
-          },
-        },
+        picker = {},
       },
     },
   },
   config = function()
+    local service_json = vim.fn.expand "~/.config/opencode/service.json"
+    local password
+    if vim.fn.filereadable(service_json) == 1 then
+      local ok, data = pcall(vim.fn.json_decode, table.concat(vim.fn.readfile(service_json), ""))
+      if ok and data and data.password then password = data.password end
+    end
+
+    vim.g.opencode_opts = {
+      server = {
+        username = "opencode",
+        password = password,
+        start = function()
+          vim.cmd("vsplit term://opencode --standalone | wincmd p")
+        end,
+      },
+    }
     vim.o.autoread = true
 
     vim.api.nvim_create_autocmd("WinEnter", {
@@ -37,30 +43,10 @@ return {
       end,
     })
 
-    local function opencode_toggle_and_insert()
-      local oc = require "opencode"
-      oc.toggle()
-      -- After toggle, find the opencode terminal window and enter insert mode in it
-      vim.schedule(function()
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          local buf = vim.api.nvim_win_get_buf(win)
-          if vim.bo[buf].buftype == "terminal" then
-            local name = vim.api.nvim_buf_get_name(buf)
-            if name:match "opencode" then
-              vim.api.nvim_set_current_win(win)
-              vim.cmd "startinsert"
-              return
-            end
-          end
-        end
-      end)
-    end
-
-    vim.keymap.set({ "n", "x", "t" }, "<C-k>", opencode_toggle_and_insert, { desc = "Toggle opencode window" })
     vim.keymap.set(
       { "n", "x" },
       "<leader>k",
-      function() require("opencode").start() end,
+      function() require("opencode").ask() end,
       { desc = "Open opencode window" }
     )
     vim.keymap.set(
@@ -75,9 +61,5 @@ return {
       function() require("opencode").select() end,
       { desc = "Execute opencode action…" }
     )
-    vim.keymap.set({ "n", "t" }, "<C-.>", opencode_toggle_and_insert, { desc = "Toggle opencode" })
-
-    vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
-    vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
   end,
 }

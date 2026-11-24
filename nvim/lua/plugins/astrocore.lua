@@ -28,7 +28,9 @@ return {
         spell = false, -- sets vim.opt.spell
         signcolumn = "auto", -- sets vim.opt.signcolumn to auto
         wrap = false, -- sets vim.opt.wrap
+        exrc = true, -- load project-local .nvim.lua
         scrolloff = 10,
+        fileformats = { "unix", "dos" }, -- prefer LF, handle CRLF without showing ^M
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -63,7 +65,6 @@ return {
         ["<Tab>"] = nil,
         -- quick save
         -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
-        ["<C-o>"] = { "<Cmd>Neotree toggle<CR>", desc = "Toggle Explorer" },
       },
       t = {
         -- setting a mapping to false will disable it
